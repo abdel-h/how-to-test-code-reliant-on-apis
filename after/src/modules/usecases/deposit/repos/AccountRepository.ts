@@ -1,54 +1,57 @@
+import { UniqueEntityID } from '../../../../shared/domain/UniqueEntityID';
 import { Account } from '../domain/account';
 
 export interface AccountRepository {
     fetch(accountId: string): Promise<Account | null>;
-    update(accountId: string, account: Account): Promise<null>
+    update(accountId: string, account: Account): Promise<null>;
 }
 
 
 class AccountCollection {
     private accounts: Account[] = [];
 
-    constructor() {}
+    constructor() { }
 
     add(account: Account) {
-        this.accounts.push(account); 
+        const clonedAccount = Account.create(new UniqueEntityID(account.getAccountId()),
+            account.props.name, account.props.balance.getValue());
+        this.accounts.push(clonedAccount);
     }
 
     update(accountId: string, account: Account) {
-        const foundAccountIndex = this.findAccountIndex(accountId); 
+        const foundAccountIndex = this.findAccountIndex(accountId);
         this.accounts[foundAccountIndex] = account;
     }
 
     addMany(account: Account[]) {
         account.forEach((account) => {
-            this.add(account)
-        })
+            this.add(account);
+        });
     }
 
     findById(accountId: string) {
-        const account = this.accounts.find((account) => account.getAccountId() === accountId)
+        const account = this.accounts.find((account) => account.getAccountId() === accountId);
 
-        return account; 
+        return account;
     }
 
     findAccountIndex(accountId: string) {
-        return this.accounts.findIndex((account) => account.getAccountId() === accountId)
+        return this.accounts.findIndex((account) => account.getAccountId() === accountId);
     }
 
     getAll() {
-        return this.accounts; 
+        return this.accounts;
     }
 }
 
 export class InMemoryAccountRepository implements AccountRepository {
 
-    private accounts = new AccountCollection(); 
+    private accounts = new AccountCollection();
 
     fetch(accountId: string): Promise<Account | null> {
-        const account = this.accounts.findById(accountId)
+        const account = this.accounts.findById(accountId);
 
-        return Promise.resolve(account ?? null)
+        return Promise.resolve(account ?? null);
     }
 
     update(accountId: string, account: Account): Promise<null> {

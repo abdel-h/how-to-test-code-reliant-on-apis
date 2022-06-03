@@ -5,7 +5,7 @@ import { Balance } from './balance';
 type AccountProps = {
     balance: Balance;
     name: string;
-}
+};
 
 export class Account extends Entity<AccountProps> {
     private constructor(props: AccountProps, id: UniqueEntityID) {
@@ -13,11 +13,16 @@ export class Account extends Entity<AccountProps> {
     }
 
     public static create(id: UniqueEntityID, name: string, balance = 0) {
-        return new Account({ name, balance: new Balance(balance) }, id);
+
+        return new Account({ name, balance: Balance.create(balance) }, id);
     }
 
     depositBalance(balance: number) {
         this.props.balance.add(balance);
+    }
+
+    withdrawBalance(balance: Balance, amount: number) {
+        return this.props.balance.withdraw(balance, amount);
     }
 
     getBalance() {

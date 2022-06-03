@@ -22,7 +22,7 @@ type Input = {
     accountId: string;
     amount: number | null
 };
-
+ 
 export class DepositFundsUseCase implements UseCase<Input, Results> {
     constructor(private accountRepository: AccountRepository, private transactionRepository: TransactionRepository) { }
 
